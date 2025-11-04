@@ -8,6 +8,8 @@
   placement:
     mode: SnapgridCenter
   components:
+  - type: PlacementReplacement
+    key: walls
   #- type: AmbientSound
   #  volume: -7
   #  range: 3
@@ -39,7 +41,7 @@
   - type: Appearance
   - type: Battery
     startingCharge: 0
-    maxCharge: 8000000
+    maxCharge: 1000
   - type: ExaminableBattery #TODO Change to mana specific
   - type: NodeContainer
     examinable: true
@@ -57,10 +59,10 @@
     voltage: High
     node: input
   - type: PowerNetworkBattery
-    maxSupply: 150000
-    maxChargeRate: 5000
-    supplyRampTolerance: 5000
-    supplyRampRate: 1000
+    maxSupply: 10
+    maxChargeRate: 10
+    supplyRampTolerance: 10
+    supplyRampRate: 1
   - type: PointLight
     radius: 1.5
     energy: 1.6
@@ -69,34 +71,17 @@
   - type: Damageable
     damageContainer: StructuralInorganic
     damageModifierSet: StructuralMetallicStrong
-  - type: DeviceNetwork
-    deviceNetId: AtmosDevices
-    receiveFrequencyId: AtmosMonitor
-    transmitFrequencyId: AtmosMonitor
-    prefix: device-address-prefix-smes
-    sendBroadcastAttemptEvent: true
-    examinableAddress: true
-  - type: WiredNetworkConnection
-  - type: BatteryInterface
-    minChargeRate: 5000
-    maxChargeRate: 150000
-    minSupply: 5000
-    maxSupply: 150000
-  - type: UserInterface
-    interfaces:
-      enum.BatteryUiKey.Key:
-        type: BatteryBoundUserInterface
-  - type: ActivatableUI
-    key: enum.BatteryUiKey.Key
+  - type: StaticPrice
+    price: 100
 
 - type: entity
   parent: CEManaCollectorBase
   id: CEManaCollector
-  suffix: Basic
+  suffix: Charged
   components:
   - type: Battery
-    maxCharge: 8000000
-    startingCharge: 8000000
+    maxCharge: 1000
+    startingCharge: 1000
 
 - type: entity
   parent: CEManaCollectorBase
@@ -104,5 +89,5 @@
   suffix: Empty
   components:
   - type: Battery
-    maxCharge: 8000000
+    maxCharge: 1000
     startingCharge: 0

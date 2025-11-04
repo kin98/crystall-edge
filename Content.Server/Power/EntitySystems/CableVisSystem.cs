@@ -14,11 +14,9 @@ namespace Content.Server.Power.EntitySystems
         [Dependency] private readonly SharedAppearanceSystem _appearance = default!;
         [Dependency] private readonly NodeContainerSystem _nodeContainer = default!;
         [Dependency] private readonly SharedMapSystem _map = default!;
-
         public override void Initialize()
         {
             base.Initialize();
-
             SubscribeLocalEvent<CableVisComponent, NodeGroupsRebuilt>(UpdateAppearance);
         }
 

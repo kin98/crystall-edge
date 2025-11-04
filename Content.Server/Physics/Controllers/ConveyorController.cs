@@ -13,7 +13,7 @@ using Robust.Shared.Physics.Systems;
 
 namespace Content.Server.Physics.Controllers;
 
-public sealed class ConveyorController : SharedConveyorController
+public sealed partial class ConveyorController : SharedConveyorController //CrystallEdge partial
 {
     [Dependency] private readonly FixtureSystem _fixtures = default!;
     [Dependency] private readonly DeviceLinkSystem _signalSystem = default!;
@@ -31,12 +31,13 @@ public sealed class ConveyorController : SharedConveyorController
         SubscribeLocalEvent<ConveyorComponent, SignalReceivedEvent>(OnSignalReceived);
         SubscribeLocalEvent<ConveyorComponent, PowerChangedEvent>(OnPowerChanged);
 
+        InitCrystallEdge();
         base.Initialize();
     }
 
     private void OnInit(EntityUid uid, ConveyorComponent component, ComponentInit args)
     {
-        _signalSystem.EnsureSinkPorts(uid, component.ReversePort, component.ForwardPort, component.OffPort);
+        //_signalSystem.EnsureSinkPorts(uid, component.ReversePort, component.ForwardPort, component.OffPort); //CrystallEdge - we dont need sink ports
 
         if (PhysicsQuery.TryComp(uid, out var physics))
         {

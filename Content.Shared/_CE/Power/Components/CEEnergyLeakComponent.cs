@@ -3,6 +3,9 @@ using Robust.Shared.Serialization;
 
 namespace Content.Shared._CE.Power.Components;
 
+/// <summary>
+/// Works together with PowerConsumerComponent, emitting radiation around itself depending on the level of energy consumed
+/// </summary>
 [RegisterComponent, NetworkedComponent, AutoGenerateComponentState]
 public sealed partial class CEEnergyLeakComponent : Component
 {
@@ -17,7 +20,7 @@ public sealed partial class CEEnergyLeakComponent : Component
 }
 
 [Serializable, NetSerializable]
-public enum CEEnergyLeakVisuals : byte
+public enum CEToggleableCableVisuals : byte
 {
     Enabled,
 }

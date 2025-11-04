@@ -11,13 +11,13 @@
   components:
   - type: PlacementReplacement
     key: pipe_big
-  - type: CableVisualizer
+  - type: CEPipeVisualizer
     statePrefix: pipe_
 
 - type: entity
   id: CEPipeBrassBig
   parent: CEPipeBrassBigBase
-  name: wide brass pipe
+  name: brass pipe
   components:
   - type: Sprite
     sprite: _CE/Structures/Power/Pipes/big_flat.rsi
@@ -39,6 +39,7 @@
         layer:
         - TableLayer
   - type: Climbable
+    delay: 0.5
   - type: Destructible
     thresholds:
     - trigger:
@@ -47,15 +48,12 @@
       behaviors:
       - !type:SpawnEntitiesBehavior
         spawn:
-          CEScrapBrass:
+          CEBrassScrap1:
             min: 1
             max: 1
-      #- !type:PlaySoundBehavior
-      #  sound:
-      #    path: /Audio/Effects/tree_fell.ogg
-      #    params:
-      #      volume: 5
-      #      variation: 0.05
+      - !type:PlaySoundBehavior
+        sound:
+          collection: MetalBreak
       - !type:ChangeConstructionNodeBehavior
         node: CEPipeBrassBigBroken
   - type: NodeContainer
@@ -70,7 +68,7 @@
 - type: entity
   parent: CEPipeBrassBig
   id: CEPipeBrassBigVerticalUp
-  name: wide brass pipe up
+  name: brass pipe up
   components:
   - type: Sprite
     sprite: _CE/Structures/Power/Pipes/big_up.rsi
@@ -85,25 +83,6 @@
         !type:CECableVerticalNode
         up: true
         nodeGroupID: HVPower
-  - type: Destructible
-    thresholds:
-    - trigger:
-        !type:DamageTrigger
-        damage: 25
-      behaviors:
-      - !type:SpawnEntitiesBehavior
-        spawn:
-          CEScrapBrass:
-            min: 1
-            max: 1
-      #- !type:PlaySoundBehavior
-      #  sound:
-      #    path: /Audio/Effects/tree_fell.ogg
-      #    params:
-      #      volume: 5
-      #      variation: 0.05
-      - !type:ChangeConstructionNodeBehavior
-        node: CEPipeBrassBigVerticalUpBroken
   - type: Construction
     graph: CEPipeBrassBig
     node: CEPipeBrassBigVerticalUp
@@ -111,7 +90,7 @@
 - type: entity
   parent: CEPipeBrassBig
   id: CEPipeBrassBigVerticalDown
-  name: wide brass pipe down
+  name: brass pipe down
   components:
   - type: Sprite
     sprite: _CE/Structures/Power/Pipes/big_down.rsi
@@ -126,6 +105,51 @@
         !type:CECableVerticalNode
         down: true
         nodeGroupID: HVPower
+  - type: Construction
+    graph: CEPipeBrassBig
+    node: CEPipeBrassBigVerticalDown
+
+# Valve
+
+- type: entity
+  id: CEPipeBrassBigValve
+  parent: CEPipeBrassBig
+  name: pipe valve
+  description: A valve installed on a brass pipe, allowing for the regulation of arcane energy flow through the pipe.
+  suffix: Valve, Off
+  components:
+  - type: InteractionOutline
+  - type: CEToggleableCable
+    active: false
+  - type: Sprite
+    layers:
+    - state: pipe_15
+    - state: valve_off
+      map: ["valve"]
+    - state: valve_off_light
+      shader: unshaded
+      map: ["valve_light"]
+  - type: NodeContainer
+    nodes:
+      power:
+        !type:CableNode
+        nodeGroupID: HVPower
+        active: false
+  - type: UseDelay
+  - type: GenericVisualizer
+    visuals:
+      enum.CEToggleableCableVisuals.Enabled:
+        valve_light:
+          True: {state: valve_on_light}
+          False: {state: valve_off_light}
+        valve:
+          True: {state: valve_on}
+          False: {state: valve_off}
+  - type: EmitSoundOnActivate
+    sound: /Audio/Effects/toss.ogg
+  - type: Construction
+    graph: CEPipeBrassBig
+    node: CEPipeBrassBigValve
   - type: Destructible
     thresholds:
     - trigger:
@@ -134,28 +158,48 @@
       behaviors:
       - !type:SpawnEntitiesBehavior
         spawn:
-          CEScrapBrass:
+          CEBrassScrap1:
             min: 1
             max: 1
-      #- !type:PlaySoundBehavior
-      #  sound:
-      #    path: /Audio/Effects/tree_fell.ogg
-      #    params:
-      #      volume: 5
-      #      variation: 0.05
+          CEIronScrap1:
+            min: 1
+            max: 1
+      - !type:PlaySoundBehavior
+        sound:
+          collection: MetalBreak
       - !type:ChangeConstructionNodeBehavior
-        node: CEPipeBrassBigVerticalDownBroken
-  - type: Construction
-    graph: CEPipeBrassBig
-    node: CEPipeBrassBigVerticalDown
+        node: CEPipeBrassBigBroken
+
+- type: entity
+  id: CEPipeBrassBigValveOn
+  parent: CEPipeBrassBigValve
+  suffix: Valve, On
+  components:
+  - type: CEToggleableCable
+    active: true
+  - type: Sprite
+    layers:
+    - state: pipe_15
+    - state: valve_on
+      map: ["valve"]
+    - state: valve_on_light
+      shader: unshaded
+      map: ["valve_light"]
+  - type: NodeContainer
+    nodes:
+      power:
+        !type:CableNode
+        nodeGroupID: HVPower
+        active: true
 
 # Broken
 
 - type: entity
-  id: CEPipeBrassBigBrokenBase
+  id: CEPipeBrassBigBroken
+  parent: CEPipeBrassBig
   categories: [ ForkFiltered ]
-  abstract: true
   description: Damaged brass pipe. The arcane energy flowing through them will flow here and may pose a serious danger to creatures susceptible to magic.
+  suffix: Broken
   components:
   - type: Sprite
     layers:
@@ -164,10 +208,9 @@
       shader: unshaded
       visible: false
       map: [ sparkle ]
-  - type: Appearance
   - type: GenericVisualizer
     visuals:
-      enum.CEEnergyLeakVisuals.Enabled:
+      enum.CEPowerConsumerVisuals.Active:
         sparkle:
           True: {visible: true}
           False: {visible: false}
@@ -179,20 +222,17 @@
       behaviors:
       - !type:SpawnEntitiesBehavior
         spawn:
-          CEScrapBrass:
+          CEBrassScrap1:
             min: 1
             max: 1
-      #- !type:PlaySoundBehavior
-      #  sound:
-      #    path: /Audio/Effects/tree_fell.ogg
-      #    params:
-      #      volume: 5
-      #      variation: 0.05
+      - !type:PlaySoundBehavior
+        sound:
+          collection: MetalBreak
       - !type:DoActsBehavior
         acts: [ "Destruction" ]
   - type: PowerConsumer
     voltage: High
-    drawRate: 10
+    drawRate: 5
   - type: RadiationSource
     intensity: 0
   - type: CEEnergyLeak
@@ -212,59 +252,9 @@
       property: Energy
       isLooped: true
       enabled: false
-
-- type: entity
-  parent:
-  - CEPipeBrassBig
-  - CEPipeBrassBigBrokenBase
-  id: CEPipeBrassBigBroken
-  suffix: Broken
-  components:
   - type: Construction
     graph: CEPipeBrassBig
     node: CEPipeBrassBigBroken
     defaultTarget: CEPipeBrassBig
-  - type: CableVisualizer
+  - type: CEPipeVisualizer
     statePrefix: broken_pipe_
-
-- type: entity
-  parent:
-  - CEPipeBrassBigVerticalUp
-  - CEPipeBrassBigBrokenBase
-  id: CEPipeBrassBigVerticalUpBroken
-  suffix: Broken
-  components:
-  - type: Construction
-    graph: CEPipeBrassBig
-    node: CEPipeBrassBigVerticalUpBroken
-    defaultTarget: CEPipeBrassBigVerticalUp
-  - type: NodeContainer
-    nodes:
-      power:
-        !type:CableNode
-        nodeGroupID: HVPower
-      power_vertical:
-        !type:CECableVerticalNode
-        up: true
-        nodeGroupID: HVPower
-
-- type: entity
-  parent:
-  - CEPipeBrassBigVerticalDown
-  - CEPipeBrassBigBrokenBase
-  id: CEPipeBrassBigVerticalDownBroken
-  suffix: Broken
-  components:
-  - type: Construction
-    graph: CEPipeBrassBig
-    node: CEPipeBrassBigVerticalDownBroken
-    defaultTarget: CEPipeBrassBigVerticalDown
-  - type: NodeContainer
-    nodes:
-      power:
-        !type:CableNode
-        nodeGroupID: HVPower
-      power_vertical:
-        !type:CECableVerticalNode
-        down: true
-        nodeGroupID: HVPower
