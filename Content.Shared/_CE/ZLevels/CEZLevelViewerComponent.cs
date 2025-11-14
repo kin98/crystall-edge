@@ -18,6 +18,15 @@ public sealed partial class CEZLevelViewerComponent : Component
     [DataField, AutoNetworkedField]
     public bool LookUp;
 
+    /// <summary>
+    /// Viewed ZLevel relative to entities current ZLevel position.
+    /// </summary>
+    [DataField, AutoNetworkedField]
+    public ZLevelViewRelation Relation;
+
+    [DataField, AutoNetworkedField]
+    public int ViewedZLevel;
+
     [DataField]
     public EntProtoId ActionProto = "CEActionToggleLookUp";
 
@@ -26,4 +35,12 @@ public sealed partial class CEZLevelViewerComponent : Component
 
     [DataField, AutoNetworkedField]
     public float ThrowUpForce = 5f; //I dont really like this in viewer component
+}
+
+[Flags]
+public enum ZLevelViewRelation : byte
+{
+    Static = 1,  //In Relation to the Worlds Base ZLevel
+    Absolute = 2, //In Relation to Grids base ZLevel
+    Relative = 4, //In Relation to current Entity ZLevel
 }
