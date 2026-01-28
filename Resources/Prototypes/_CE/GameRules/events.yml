@@ -12,6 +12,7 @@
   table: !type:AllSelector
     children:
     - id: CERandomPipeBreak
+    - id: CELurkerSpawn
 
 - type: entity
   parent: CEBaseGameRule
@@ -31,3 +32,15 @@
     replaceVfx: CEOverchargeBrightVFX
     replaceSound:
       collection: MetalBreak
+
+- type: entity
+  parent: CEBaseGameRule
+  id: CELurkerSpawn
+  components:
+  - type: StationEvent
+    weight: 3
+    duration: 5
+    minimumPlayers: 5
+  - type: CELurkerRule
+
+
