@@ -6,8 +6,13 @@
         - !type:HTNCompoundTask
           task: MeleeCombatCompound
     - tasks:
-        - !type:HTNCompoundTask
-          task: IdleCompound
+        - !type:HTNPrimitiveTask
+          operator: !type:MoveOperator
+    - tasks:
+        - !type:HTNPrimitiveTask
+          operator: !type:SetFloatOperator
+            targetKey: MovementDuration
+            amount: 3
 
 - type: htnCompound
   id: RatServantTargetAttackCompound
@@ -31,7 +36,7 @@
     - tasks:
         - !type:HTNCompoundTask
           task: IdleCompound
-          
+
 - type: htnCompound
   id: MoproachCompound
   branches:
